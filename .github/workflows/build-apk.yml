@@ -29,6 +29,10 @@ jobs:
           if [ -f advanced_developer_mode_complete.patch ]; then
             perl -pe 's/\e\[[0-9;]*m//g' advanced_developer_mode_complete.patch > /tmp/advanced_clean.patch
             git apply --exclude='.github/workflows/build-apk.yml' /tmp/advanced_clean.patch
+
+            sed -i 's/protected void onCreate(@Nullable Bundle savedInstanceState)/public void onCreate(@Nullable Bundle savedInstanceState)/' app/src/main/java/pro/sketchware/activities/advanced/AdvancedDeveloperModeActivity.java
+
+            sed -i 's#<string name="link_github_commits_url"#<string formatted="false" name="link_github_commits_url"#' app/src/main/res/values/strings.xml
           else
             echo "No Advanced Developer Mode patch found; building the checked-out source as-is."
           fi
