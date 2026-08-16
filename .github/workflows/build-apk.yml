@@ -27,7 +27,8 @@ jobs:
       - name: Apply Advanced Developer Mode patch
         run: |
           if [ -f advanced_developer_mode_complete.patch ]; then
-            git apply --exclude='.github/workflows/build-apk.yml' advanced_developer_mode_complete.patch
+            perl -pe 's/\e\[[0-9;]*m//g' advanced_developer_mode_complete.patch > /tmp/advanced_clean.patch
+            git apply --exclude='.github/workflows/build-apk.yml' /tmp/advanced_clean.patch
           else
             echo "No Advanced Developer Mode patch found; building the checked-out source as-is."
           fi
@@ -51,8 +52,6 @@ jobs:
         run: chmod +x ./gradlew
 
       - name: Build Debug APK
-        env:
-          JAVA_HOME: ${{ env.JAVA_HOME }}
         run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
 
       - name: Upload APK artifact
